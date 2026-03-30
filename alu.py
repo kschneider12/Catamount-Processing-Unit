@@ -38,7 +38,7 @@ instructions are needed for setting flags).
 CS 2210 Computer Organization
 Clayton Cafiero <cbcafier@uvm.edu>
 
-STARTER CODE - REPLACE THIS LINE WITH YOUR NAME HERE
+Nico Milazzo and Kent Schneider
 """
 
 from constants import WORD_MASK, WORD_SIZE
