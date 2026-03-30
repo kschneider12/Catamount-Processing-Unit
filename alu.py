@@ -172,7 +172,7 @@ class Alu:
         """
         result = a & b
         self._update_logic_flags(result)
-        return a & b
+        return result
 
     def _or(self, a, b):
         """
@@ -180,7 +180,8 @@ class Alu:
         """
         result = a | b
         self._update_logic_flags(result)
-        return a | b
+        return result
+
     def _xor(self, a, b):
         """
         Bitwise XOR
@@ -202,8 +203,8 @@ class Alu:
             a &= WORD_MASK  # Keep this line as is
 
             # Replace these two lines with a complete implementation
-            result = a << b if (b & MSB) else a >> b
-            bit_out = (a & MSB) & (b & MSB)
+            result = a << b if ~(b & MSB) else a >> b
+            bit_out = (a & MSB) & ~(b & MSB)
 
             # Keep these last two lines as they are
             self._update_shift_flags(result, bit_out)
@@ -221,7 +222,7 @@ class Alu:
         return x
 
     def _update_logic_flags(self, result):
-        if result & MSB:
+        if result & (1 << (WORD_MASK - 1)):
             self._flags |= N_FLAG
         if result == 0:
             self._flags |= Z_FLAG
