@@ -174,6 +174,7 @@ class Alu:
         b &= WORD_MASK
 
         result = a & b
+        result &= WORD_MASK
         self._update_logic_flags(result)
         return result
 
@@ -185,6 +186,7 @@ class Alu:
         b &= WORD_MASK
 
         result = a | b
+        result &= WORD_MASK
         self._update_logic_flags(result)
         return result
 
