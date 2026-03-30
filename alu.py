@@ -227,7 +227,7 @@ class Alu:
             self._flags |= Z_FLAG
 
     def _update_arith_flags_add(self, a, b, result):
-        if result & (1 << (WORD_SIZE - 1)):
+        if result & MSB:
             self._flags |= N_FLAG
         if result == 0:
             self._flags |= Z_FLAG
@@ -257,4 +257,9 @@ class Alu:
             self._flags |= V_FLAG
 
     def _update_shift_flags(self, result, bit_out):
-        pass  # replace pass with correct implementation
+        if result & MSB:
+            self._flags |= N_FLAG
+        if result == 0:
+            self._flags |= Z_FLAG
+        if bit_out:
+            self._flags |= C_FLAG
