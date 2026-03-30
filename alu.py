@@ -214,7 +214,7 @@ class Alu:
             a &= WORD_MASK  # Keep this line as is
 
             # Replace these two lines with a complete implementation
-            left = bool(~(self._to_signed(b) & MSB))
+            left = self._to_signed(b) & MSB == 0
             b &= 0b1111
             result = a << b if left else a >> b
             bit_out = (a & MSB) & left
