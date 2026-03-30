@@ -84,15 +84,15 @@ class Alu:
             case 0b000:
                 self._op = "ADD"
             case 0b001:
-                pass  # replace pass with correct assignment
+                self._op = "SUB" # replace pass with correct assignment
             case 0b010:
-                pass  # replace pass with correct assignment
+                self._op = "AND" # replace pass with correct assignment
             case 0b011:
-                pass  # replace pass with correct assignment
+                self._op = "OR" # replace pass with correct assignment
             case 0b100:
-                pass  # replace pass with correct assignment
-            # Following the pattern above, create a case and
-            # assignment for XOR
+                self._op = "XOR" # replace pass with correct assignment
+            case 0b101:
+                self._op = "SHFT"
             case _:
                 raise ValueError("Invalid control signal")
         # Return value is for testing.
@@ -116,21 +116,21 @@ class Alu:
         """
         Return negative flag
         """
-        return None  # replace this with correct return statement
+        return bool(self._flags & N_FLAG)
 
     @property
     def carry(self):
         """
         Return carry flag
         """
-        return None  # replace this with correct return statement
+        return bool(self._flags & C_FLAG)
 
     @property
     def overflow(self):
         """
         Return overflow flag
         """
-        return None  # replace this with correct return statement
+        return bool(self._flags & V_FLAG)
 
     def execute(self, a, b):
         """
@@ -159,7 +159,11 @@ class Alu:
         """
         SUB
         """
-        pass  # replace pass with correct implementation
+        a = a & WORD_MASK
+        b = (self._to_signed(b) * -1) & WORD_MASK
+        result = (a + b) & WORD_MASK
+        self._update_arith_flags_sub(a, b, result)
+        return result
 
     def _and(self, a, b):
         """
@@ -227,7 +231,19 @@ class Alu:
             self._flags |= V_FLAG
 
     def _update_arith_flags_sub(self, a, b, result):
-        pass  # replace pass with correct implementation
+        if result & (1 << (WORD_SIZE - 1)):
+            self._flags |= N_FLAG
+        if result == 0:
+            self._flags |= Z_FLAG
+        if a + b > WORD_MASK:
+            self._flags |= C_FLAG
+        sa, sb, sr = (
+            (a >> (WORD_SIZE - 1)) & 1,
+            (b >> (WORD_SIZE - 1)) & 1,
+            (result >> (WORD_SIZE - 1)) & 1,
+        )
+        if sa == sb and sr != sa:
+            self._flags |= V_FLAG
 
     def _update_shift_flags(self, result, bit_out):
         pass  # replace pass with correct implementation
