@@ -203,8 +203,10 @@ class Alu:
             a &= WORD_MASK  # Keep this line as is
 
             # Replace these two lines with a complete implementation
-            result = a << b if ~(b & MSB) else a >> b
-            bit_out = (a & MSB) & ~(b & MSB)
+            b &= 0b1111
+            left = bool(~(self._to_signed(b) & MSB))
+            result = a << b if left else a >> b
+            bit_out = (a & MSB) & left
 
             # Keep these last two lines as they are
             self._update_shift_flags(result, bit_out)
