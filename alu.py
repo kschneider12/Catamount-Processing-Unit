@@ -169,19 +169,18 @@ class Alu:
         """
         Bitwise AND
         """
-        pass  # replace pass with correct implementation
+        return a & b
 
     def _or(self, a, b):
         """
         Bitwise OR
         """
-        pass  # replace pass with correct implementation
-
+        return a | b
     def _xor(self, a, b):
         """
         Bitwise XOR
         """
-        pass  # replace pass with correct implementation
+        return a ^ b
 
     def _shft(self, a, b):
         """
@@ -192,15 +191,17 @@ class Alu:
         Keep in mind when we shift we need to keep track of the
         last bit shifted out. This is used to set the carry flag.
         """
-        a &= WORD_MASK  # Keep this line as is
+        if b == 0:
+            a &= WORD_MASK  # Keep this line as is
 
-        # Replace these two lines with a complete implementation
-        result = 0
-        bit_out = 0
+            # Replace these two lines with a complete implementation
+            result = 0
+            bit_out = 0
 
-        # Keep these last two lines as they are
-        self._update_shift_flags(result, bit_out)
-        return result
+            # Keep these last two lines as they are
+            self._update_shift_flags(result, bit_out)
+            return result
+        return 0
 
     def _to_signed(self, x):
         """
@@ -213,7 +214,7 @@ class Alu:
         return x
 
     def _update_logic_flags(self, result):
-        pass  # replace pass with correct implementation
+        pass
 
     def _update_arith_flags_add(self, a, b, result):
         if result & (1 << (WORD_SIZE - 1)):
