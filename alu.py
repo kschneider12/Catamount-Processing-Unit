@@ -171,6 +171,7 @@ class Alu:
         Bitwise AND
         """
         result = a & b
+        result &= WORD_MASK
         self._update_logic_flags(result)
         return result
 
@@ -179,6 +180,7 @@ class Alu:
         Bitwise OR
         """
         result = a | b
+        result &= WORD_MASK
         self._update_logic_flags(result)
         return result
 
