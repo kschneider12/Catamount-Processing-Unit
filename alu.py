@@ -217,12 +217,14 @@ class Alu:
             left = self._to_signed(b) & MSB == 0
             b &= 0b1111
             result = a << b if left else a >> b
-            bit_out = (a & MSB) & left
+            bit_out = (self._to_signed(a) & MSB) if (left) else ((a & 0b1) and b == 1)
+
+            result &= WORD_MASK
 
             # Keep these last two lines as they are
             self._update_shift_flags(result, bit_out)
             return result
-        return a
+        return a & WORD_MASK
 
     def _to_signed(self, x):
         """
