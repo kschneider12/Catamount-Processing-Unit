@@ -91,9 +91,9 @@ class Alu:
             case 0b011:
                 self._op = "OR" # replace pass with correct assignment
             case 0b100:
-                self._op = "XOR" # replace pass with correct assignment
+                self._op = "SHFT" # replace pass with correct assignment
             case 0b101:
-                self._op = "SHFT"
+                self._op = "XOR"
             case _:
                 raise ValueError("Invalid control signal")
         # Return value is for testing.
@@ -178,7 +178,7 @@ class Alu:
         """
         Bitwise OR
         """
-        result = self._to_signed(self._to_signed(a) | self._to_signed(b))
+        result = a | b
         self._update_logic_flags(result)
         return result
 
@@ -222,7 +222,7 @@ class Alu:
         return x
 
     def _update_logic_flags(self, result):
-        if result & MSB:
+        if self._to_signed(result) & MSB:
             self._flags |= N_FLAG
         if result == 0:
             self._flags |= Z_FLAG
@@ -243,7 +243,7 @@ class Alu:
             self._flags |= V_FLAG
 
     def _update_arith_flags_sub(self, a, b, result):
-        if result & MSB:
+        if self._to_signed(result) & MSB:
             self._flags |= N_FLAG
         if result == 0:
             self._flags |= Z_FLAG
@@ -258,7 +258,7 @@ class Alu:
             self._flags |= V_FLAG
 
     def _update_shift_flags(self, result, bit_out):
-        if result & MSB:
+        if self._to_signed(result) & MSB:
             self._flags |= N_FLAG
         if result == 0:
             self._flags |= Z_FLAG
