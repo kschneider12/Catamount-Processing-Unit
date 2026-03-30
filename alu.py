@@ -84,13 +84,15 @@ class Alu:
             case 0b000:
                 self._op = "ADD"
             case 0b001:
-                pass  # replace pass with correct assignment
+                self._op = "SUB"
             case 0b010:
-                pass  # replace pass with correct assignment
+                self._op = "AND"
             case 0b011:
-                pass  # replace pass with correct assignment
+                self._op = "OR"
             case 0b100:
-                pass  # replace pass with correct assignment
+                self._op = "XOR"
+            case 0b101:
+                self._op = "SHFT"
             # Following the pattern above, create a case and
             # assignment for XOR
             case _:
@@ -116,21 +118,21 @@ class Alu:
         """
         Return negative flag
         """
-        return None  # replace this with correct return statement
+        return bool(self._flags & N_FLAG)
 
     @property
     def carry(self):
         """
         Return carry flag
         """
-        return None  # replace this with correct return statement
+        return bool(self._flags & C_FLAG)
 
     @property
     def overflow(self):
         """
         Return overflow flag
         """
-        return None  # replace this with correct return statement
+        return bool(self._flags & V_FLAG)
 
     def execute(self, a, b):
         """
@@ -165,19 +167,18 @@ class Alu:
         """
         Bitwise AND
         """
-        pass  # replace pass with correct implementation
+        return a & b
 
     def _or(self, a, b):
         """
         Bitwise OR
         """
-        pass  # replace pass with correct implementation
-
+        return a | b
     def _xor(self, a, b):
         """
         Bitwise XOR
         """
-        pass  # replace pass with correct implementation
+        return a ^ b
 
     def _shft(self, a, b):
         """
@@ -188,15 +189,17 @@ class Alu:
         Keep in mind when we shift we need to keep track of the
         last bit shifted out. This is used to set the carry flag.
         """
-        a &= WORD_MASK  # Keep this line as is
+        if b == 0:
+            a &= WORD_MASK  # Keep this line as is
 
-        # Replace these two lines with a complete implementation
-        result = 0
-        bit_out = 0
+            # Replace these two lines with a complete implementation
+            result = 0
+            bit_out = 0
 
-        # Keep these last two lines as they are
-        self._update_shift_flags(result, bit_out)
-        return result
+            # Keep these last two lines as they are
+            self._update_shift_flags(result, bit_out)
+            return result
+        return 0
 
     def _to_signed(self, x):
         """
@@ -209,7 +212,7 @@ class Alu:
         return x
 
     def _update_logic_flags(self, result):
-        pass  # replace pass with correct implementation
+        pass
 
     def _update_arith_flags_add(self, a, b, result):
         if result & (1 << (WORD_SIZE - 1)):
