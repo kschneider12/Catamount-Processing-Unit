@@ -178,7 +178,7 @@ class Alu:
         """
         Bitwise OR
         """
-        result = a | b
+        result = self._to_signed(self._to_signed(a) | self._to_signed(b))
         self._update_logic_flags(result)
         return result
 
@@ -222,13 +222,13 @@ class Alu:
         return x
 
     def _update_logic_flags(self, result):
-        if result & (1 << (WORD_MASK - 1)):
+        if result & MSB:
             self._flags |= N_FLAG
         if result == 0:
             self._flags |= Z_FLAG
 
     def _update_arith_flags_add(self, a, b, result):
-        if result & MSB:
+        if result & (1 << (WORD_SIZE - 1)):
             self._flags |= N_FLAG
         if result == 0:
             self._flags |= Z_FLAG
@@ -243,7 +243,7 @@ class Alu:
             self._flags |= V_FLAG
 
     def _update_arith_flags_sub(self, a, b, result):
-        if result & (1 << (WORD_SIZE - 1)):
+        if result & MSB:
             self._flags |= N_FLAG
         if result == 0:
             self._flags |= Z_FLAG
