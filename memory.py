@@ -11,7 +11,7 @@ Clayton Cafiero <cbcafier@uvm.edu>
 STARTER CODE - REPLACE THIS LINE WITH YOUR NAME HERE
 """
 
-from constants import STACK_BASE, WORD_SIZE
+from constants import STACK_BASE, WORD_SIZE, STACK_TOP
 
 
 class Memory:
@@ -25,13 +25,17 @@ class Memory:
     def _check_addr(self, address):
         # Make sure address is positive, in the desired range,
         # otherwise raise a `ValueError`. Replace `pass` below.
-        pass
+        if address < 0 or address > STACK_TOP: #TODO: UPPER BOUND FUNCTIONAL? HOW DEBUG?
+            raise ValueError("Address out of range")
 
     def write_enable(self, b):
         # Make sure `b` is a Boolean (hint: use `isinstance()).
         # If not, raise `TypeError`. If OK, then set
         # `_write_enable` accordingly. Replace `pass` below.
-        pass
+        if isinstance(b, bool):
+            _write_enable = b
+        else:
+            raise TypeError("Write enable must be bool.")
 
     def read(self, addr):
         """
@@ -39,8 +43,8 @@ class Memory:
         """
         # Make sure `addr` is OK by calling `_check_addr`. If OK, return value
         # from `_cells` or default if never written. (Hint: use `.get()`.)
-        # Replace `pass` below.
-        pass
+        self._check_addr(addr) #stops if not functional #TODO: BROKEN
+        return self._cells.get(addr, 0)
 
     def write(self, addr, value):
         """
@@ -50,7 +54,12 @@ class Memory:
         # Otherwise, call `_check_addr()`. If OK, write masked value to the
         # selected address, then turn off `_write_enable` when done. Return
         # `True` on success. Replace `pass` below.
-        pass
+        if self._write_enable:
+            self._check_addr(addr)
+            self._cells[addr] = value
+            self._write_enable = False
+        else:
+            raise RuntimeError(f"Write enable False. {addr}")
         return True
 
     def hexdump(self, start=0, stop=None, width=8):
