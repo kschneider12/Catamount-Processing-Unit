@@ -5,7 +5,7 @@ A toy 16-bit Harvard architecture CPU.
 CS 2210 Computer Organization
 Clayton Cafiero <cbcafier@uvm.edu>
 
-STARTER CODE - REPLACE THIS LINE WITH YOUR NAME HERE
+Nico Milazzo, Kent Schneider
 """
 
 from alu import Alu
@@ -93,7 +93,22 @@ class Cpu:
                 case "AND":
                     pass  # complete implementation here
                 case "OR":
-                    pass  # complete implementation here
+                    # Set the alu current operation (OR)
+                    self._alu.set_op("OR")
+
+                    # Get the destination register of the decoded instruction
+                    rd = self._decoded.rd
+                    # Get the operand a register...
+                    ra = self._decoded.ra
+                    # Get the operand b register
+                    rb = self._decoded.rb
+
+                    # Get the values of a and b from registers a and b
+                    op_a, op_b = self._regs.execute(ra=ra, rb=rb)
+                    # Calculate result with alu
+                    result = self._alu.execute(op_a, op_b)
+                    # Execute the value into the destination register
+                    self._regs.execute(rd=rd, data=result, write_enable=True)
                 case "XOR":
                     pass  # complete implementation here
                 case "SHFT":

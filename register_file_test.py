@@ -26,6 +26,7 @@ def test_reject_data_out_of_bounds(value):
         r.write(value)
 
 
+
 @pytest.mark.parametrize(
     "value",
     [
