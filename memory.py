@@ -8,7 +8,7 @@ between 0xFFFF and 0xFF00).
 CS 2210 Computer Organization
 Clayton Cafiero <cbcafier@uvm.edu>
 
-STARTER CODE - REPLACE THIS LINE WITH YOUR NAME HERE
+Nico Milazzo and Kent Schneider
 """
 
 from constants import STACK_BASE, WORD_SIZE, STACK_TOP
@@ -33,7 +33,7 @@ class Memory:
         # If not, raise `TypeError`. If OK, then set
         # `_write_enable` accordingly. Replace `pass` below.
         if isinstance(b, bool):
-            _write_enable = b
+            self._write_enable = b
         else:
             raise TypeError("Write enable must be bool.")
 
