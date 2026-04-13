@@ -25,7 +25,7 @@ class Memory:
     def _check_addr(self, address):
         # Make sure address is positive, in the desired range,
         # otherwise raise a `ValueError`. Replace `pass` below.
-        if address < 0 or address > STACK_TOP: #TODO: UPPER BOUND FUNCTIONAL? HOW DEBUG?
+        if address < 0 or address > STACK_TOP:
             raise ValueError("Address out of range")
 
     def write_enable(self, b):
@@ -43,7 +43,7 @@ class Memory:
         """
         # Make sure `addr` is OK by calling `_check_addr`. If OK, return value
         # from `_cells` or default if never written. (Hint: use `.get()`.)
-        self._check_addr(addr) #stops if not functional #TODO: BROKEN
+        self._check_addr(addr) #stops if not functional
         return self._cells.get(addr, 0)
 
     def write(self, addr, value):
