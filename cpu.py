@@ -87,27 +87,33 @@ class Cpu:
                     self._regs.execute(rd=rd, data=data, write_enable=True)
                 case "LOAD":
                     # gets destination in register
-                    dest = self._decoded.rd
+                    rd = self._decoded.rd
 
                     #gets start and offset for where we want to pull from memory
-                    start = self._decoded.ra
-                    offset = self._decoded.imm
+                    ra = self._decoded.ra
+                    ra_val, _ = self._regs.execute(ra=ra)
+
+                    offset = self.sext(self._decoded.addr, 6)
 
                     #access data memory and read at index (start+offset)
-                    data = self._d_mem.read(start + offset)
+                    data = self._d_mem.read(ra_val + offset)
 
                     #write data to dest in register
-                    self._regs.execute(rd=dest, data=data, write_enable=True)
+                    self._regs.execute(rd=rd, data=data, write_enable=True)
 
                     #Fields: opcode(4), rd(3), ra(3), imm(6)
                     #Semantics: Rd <– MEM[Ra + signextend(imm6)]
                 case "STORE":
                     #Fields: opcode(4), ra(3), rb(3), imm(6)
                     #Semantics: MEM[Rb + signextend(imm6)] <– Ra
-                    data = self._decoded.ra
-                    init_pos = self._decoded.rb
-                    shift = self.sext(self._decoded.imm, 6)
-                    self._d_mem.write(init_pos + shift, data, write_enable=True)
+                    ra = self._decoded.ra
+                    rb = self._decoded.rb
+                    ra_val, rb_val = self._regs.execute(ra=ra, rb=rb)
+
+                    offset = self.sext(self._decoded.addr, 6)
+
+                    self._d_mem.write_enable(True)
+                    self._d_mem.write(rb_val + offset, ra_val)
                 case "ADDI":
                     # Set the alu current operation (ADD)
                     self._alu.set_op("ADD")
