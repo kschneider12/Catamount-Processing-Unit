@@ -161,8 +161,8 @@ class Alu:
         SUB
         """
         a = a & WORD_MASK
-        b = (self._to_signed(b) * -1) & WORD_MASK
-        result = (a + b) & WORD_MASK
+        new_b = (self._to_signed(b) * -1) & WORD_MASK
+        result = (a + new_b) & WORD_MASK
         self._update_arith_flags_sub(a, b, result)
         return result
 
@@ -247,13 +247,13 @@ class Alu:
             self._flags |= N_FLAG
         if result == 0:
             self._flags |= Z_FLAG
-        if a + b > WORD_MASK:
-            self._flags |= C_FLAG
         sa, sb, sr = (
             (a >> (WORD_SIZE - 1)) & 1,
             (b >> (WORD_SIZE - 1)) & 1,
             (result >> (WORD_SIZE - 1)) & 1,
         )
+        if a + b > WORD_MASK:
+            self._flags |= C_FLAG
         if sa == sb and sr != sa:
             self._flags |= V_FLAG
 
@@ -262,14 +262,14 @@ class Alu:
             self._flags |= N_FLAG
         if result == 0:
             self._flags |= Z_FLAG
-        if a + b > WORD_MASK:
+        if a & WORD_MASK >= b & WORD_MASK:
             self._flags |= C_FLAG
         sa, sb, sr = (
             (a >> (WORD_SIZE - 1)) & 1,
             (b >> (WORD_SIZE - 1)) & 1,
             (result >> (WORD_SIZE - 1)) & 1,
         )
-        if sa == sb and sr != sa:
+        if sa != sb and sr == sb:
             self._flags |= V_FLAG
 
     def _update_shift_flags(self, result, bit_out):

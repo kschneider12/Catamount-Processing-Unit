@@ -106,7 +106,7 @@ class Cpu:
                     #Semantics: MEM[Rb + signextend(imm6)] <– Ra
                     data = self._decoded.ra
                     init_pos = self._decoded.rb
-                    shift = self.sext(self._decoded.imm)
+                    shift = self.sext(self._decoded.imm, 6)
                     self._d_mem.write(init_pos + shift, data, write_enable=True)
                 case "ADDI":
                     # Set the alu current operation (ADD)
@@ -227,17 +227,17 @@ class Cpu:
                 case "BNE":
                     # Fields: opcode(4), imm(8), cc(2), zero(2)
                     # Semantics: if Z == 0: PC <– PC + signextend(imm8)
-                    if self._decoded.cc == 0b01 and not self._alu.zero():
-                        self._pc += self.sext(self._decoded.imm)
+                    if not self._alu.zero:
+                        self._pc += self.sext(self._decoded.imm, 8)
 
                 case "BLT":
-                    if self._decoded.cc == 0b10 and self._alu.negative():
-                        self._pc += self.sext(self._decoded.imm)
+                    if self._alu.negative:
+                        self._pc += self.sext(self._decoded.imm, 8)
                 case "BGE":
-                    if self._decoded.cc == 0b11 and not self._alu.negative():
-                        self._pc += self.sext(self._decoded.imm)
+                    if not self._alu.negative:
+                        self._pc += self.sext(self._decoded.imm, 8)
                 case "B":
-                    self._pc += self.sext(self._decoded.imm)
+                    self._pc += self.sext(self._decoded.imm, 8)
                 case "CALL":
                     self._sp -= 1  # grow stack downward
                     # PC is incremented immediately upon fetch so already
@@ -253,12 +253,12 @@ class Cpu:
                     if self._sp == STACK_TOP:
                         raise RuntimeError("Stack underflow")
                     else:
+                        # Get return address from memory via SP
                         addr = self._d_mem.read(self._sp)
+                        # Increment SP
                         self._sp += 1
+                        # Update PC
                         self._pc = addr
-                    # Get return address from memory via SP
-                    # Increment SP
-                    # Update PC
                 case "HALT":
                     self._halt = True
                 case _:  # default
