@@ -5,7 +5,7 @@ A toy 16-bit Harvard architecture CPU.
 CS 2210 Computer Organization
 Clayton Cafiero <cbcafier@uvm.edu>
 
-STARTER CODE - REPLACE THIS LINE WITH YOUR NAME HERE
+Nico Milazzo, Kent Schneider
 """
 
 from alu import Alu
@@ -71,13 +71,12 @@ class Cpu:
             # execute...
             match self._decoded.mnem:
                 case "LOADI":
-                    #opcode(4), rd(3), imm(8), zero(1)
-                    #Semantics: Rd <– imm8 (zero-extended)
-                    dest = self._decoded.rd
-                    val = self._decoded.imm
-                    #load value into register immediately
-                    self._regs.execute(rd=dest, data=val, write_enable=True)
-
+                    # Load the two registers used
+                    rd = self._decoded.rd
+                    # Get the immediate value
+                    op = self._decoded.imm
+                    # Load the operand into the destination register
+                    self._regs.execute(rd=rd, data=op, write_enable=True)
                 case "LUI":
                     # Load upper immediate (shifted left by 8 bits)
                     rd = self._decoded.rd
@@ -113,12 +112,58 @@ class Cpu:
                 case "SUB":
                     pass  # complete implementation here
                 case "AND":
-                    pass  # complete implementation here
+                    # Set the alu current operation (AND)
+                    self._alu.set_op("AND")
+
+                    # Get the destination register of the decoded instruction
+                    rd = self._decoded.rd
+                    # Get the operand a register...
+                    ra = self._decoded.ra
+                    # Get the operand b register
+                    rb = self._decoded.rb
+
+                    # Get the values of a and b from registers a and b
+                    op_a, op_b = self._regs.execute(ra=ra, rb=rb)
+                    # Calculate result with alu
+                    result = self._alu.execute(op_a, op_b)
+                    # Execute the value into the destination register
+                    self._regs.execute(rd=rd, data=result, write_enable=True)
                 case "OR":
                     pass  # complete implementation here
 
+                    # Set the alu current operation (OR)
+                    self._alu.set_op("OR")
+
+                    # Get the destination register of the decoded instruction
+                    rd = self._decoded.rd
+                    # Get the operand a register...
+                    ra = self._decoded.ra
+                    # Get the operand b register
+                    rb = self._decoded.rb
+
+                    # Get the values of a and b from registers a and b
+                    op_a, op_b = self._regs.execute(ra=ra, rb=rb)
+                    # Calculate result with alu
+                    result = self._alu.execute(op_a, op_b)
+                    # Execute the value into the destination register
+                    self._regs.execute(rd=rd, data=result, write_enable=True)
                 case "XOR":
-                    pass  # complete implementation here
+                    # Set the alu current operation (XOR)
+                    self._alu.set_op("XOR")
+
+                    # Get the destination register of the decoded instruction
+                    rd = self._decoded.rd
+                    # Get the operand a register...
+                    ra = self._decoded.ra
+                    # Get the operand b register
+                    rb = self._decoded.rb
+
+                    # Get the values of a and b from registers a and b
+                    op_a, op_b = self._regs.execute(ra=ra, rb=rb)
+                    # Calculate result with alu
+                    result = self._alu.execute(op_a, op_b)
+                    # Execute the value into the destination register
+                    self._regs.execute(rd=rd, data=result, write_enable=True)
                 case "SHFT":
                     self._alu.set_op("SHFT")
                     rd = self._decoded.rd
@@ -171,7 +216,8 @@ class Cpu:
         self._decoded = Instruction(raw=self._ir)
 
     def _fetch(self):
-        pass  # complete implementation here
+        self._ir = self._i_mem.read(self._pc)
+        self._pc += 1
 
     def load_program(self, prog):
         self._i_mem.load_program(prog)

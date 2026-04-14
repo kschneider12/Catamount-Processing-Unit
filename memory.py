@@ -25,7 +25,7 @@ class Memory:
     def _check_addr(self, address):
         # Make sure address is positive, in the desired range,
         # otherwise raise a `ValueError`. Replace `pass` below.
-        if address < 0 or address > STACK_TOP: #TODO: UPPER BOUND FUNCTIONAL? HOW DEBUG?
+        if address < 0 or address > STACK_TOP:
             raise ValueError("Address out of range")
 
     def write_enable(self, b):
