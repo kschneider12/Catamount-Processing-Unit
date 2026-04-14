@@ -106,18 +106,63 @@ class Cpu:
                     #Semantics: MEM[Rb + signextend(imm6)] <– Ra
                     pass
                 case "ADDI":
-                    pass  # complete implementation here
+                    # Set the alu current operation (ADD)
+                    self._alu.set_op("ADD")
+
+                    # Get the destination register of the decoded instruction
+                    rd = self._decoded.rd
+                    # Get the operand a register
+                    ra = self._decoded.ra
+
+                    # Get the values of the a register
+                    op_a, _ = self._regs.execute(ra=ra)
+                    op_b = self._decoded.imm
+
+                    # Calculate result with alu
+                    result = self._alu.execute(op_a, op_b)
+                    # Execute the value into the destination register
+                    self._regs.execute(rd=rd, data=result, write_enable=True)
                 case "ADD":
-                    pass  # complete implementation here
+                    # Set the alu current operation (ADD)
+                    self._alu.set_op("ADD")
+
+                    # Get the destination register of the decoded instruction
+                    rd = self._decoded.rd
+                    # Get the operand a register
+                    ra = self._decoded.ra
+                    # Get the oprerand b register
+                    rb = self._decoded.rb
+
+                    # Get the values of a and b from registers a and b
+                    op_a, op_b = self._regs.execute(ra=ra, rb=rb)
+                    # Calculate result with alu
+                    result = self._alu.execute(op_a, op_b)
+                    # Execute the value into the destination register
+                    self._regs.execute(rd=rd, data=result, write_enable=True)
                 case "SUB":
-                    pass  # complete implementation here
+                    # Set the alu current operation (ADD)
+                    self._alu.set_op("SUB")
+
+                    # Get the destination register of the decoded instruction
+                    rd = self._decoded.rd
+                    # Get the operand a register
+                    ra = self._decoded.ra
+                    # Get the oprerand b register
+                    rb = self._decoded.rb
+
+                    # Get the values of a and b from registers a and b
+                    op_a, op_b = self._regs.execute(ra=ra, rb=rb)
+                    # Calculate result with alu
+                    result = self._alu.execute(op_a, op_b)
+                    # Execute the value into the destination register
+                    self._regs.execute(rd=rd, data=result, write_enable=True)
                 case "AND":
                     # Set the alu current operation (AND)
                     self._alu.set_op("AND")
 
                     # Get the destination register of the decoded instruction
                     rd = self._decoded.rd
-                    # Get the operand a register...
+                    # Get the operand a register
                     ra = self._decoded.ra
                     # Get the operand b register
                     rb = self._decoded.rb
@@ -195,12 +240,18 @@ class Cpu:
                     offset = self._decoded.imm
                     self._pc += self.sext(offset, 8)  # jump to target
                 case "RET":
+
+                    if self._sp == STACK_TOP:
+                        raise RuntimeError("Stack underflow")
+                    else:
+                        addr = self._d_mem.read(self._sp)
+                        self._sp += 1
+                        self._pc = addr
                     # Get return address from memory via SP
                     # Increment SP
                     # Update PC
-                    pass  # complete implementation here
                 case "HALT":
-                    pass  # complete implementation here
+                    self._halt = True
                 case _:  # default
                     raise ValueError(
                         "Unknown mnemonic: " + str(self._decoded) + "\n" + str(self._ir)
