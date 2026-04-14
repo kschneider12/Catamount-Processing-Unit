@@ -104,7 +104,10 @@ class Cpu:
                 case "STORE":
                     #Fields: opcode(4), ra(3), rb(3), imm(6)
                     #Semantics: MEM[Rb + signextend(imm6)] <– Ra
-                    pass
+                    data = self._decoded.ra
+                    init_pos = self._decoded.rb
+                    shift = self.sext(self._decoded.imm)
+                    self._d_mem.write(init_pos + shift, data, write_enable=True)
                 case "ADDI":
                     pass  # complete implementation here
                 case "ADD":
@@ -177,13 +180,19 @@ class Cpu:
                         offset = self.sext(self._decoded.imm, 8)
                         self._pc += offset  # take branch
                 case "BNE":
-                    pass  # complete implementation here
+                    # Fields: opcode(4), imm(8), cc(2), zero(2)
+                    # Semantics: if Z == 0: PC <– PC + signextend(imm8)
+                    if self._decoded.cc == 0b01 and not self._alu.zero():
+                        self._pc += self.sext(self._decoded.imm)
+
                 case "BLT":
-                    pass  # complete implementation here
+                    if self._decoded.cc == 0b10 and self._alu.negative():
+                        self._pc += self.sext(self._decoded.imm)
                 case "BGE":
-                    pass  # complete implementation here
+                    if self._decoded.cc == 0b11 and not self._alu.negative():
+                        self._pc += self.sext(self._decoded.imm)
                 case "B":
-                    pass  # complete implementation here
+                    self._pc += self.sext(self._decoded.imm)
                 case "CALL":
                     self._sp -= 1  # grow stack downward
                     # PC is incremented immediately upon fetch so already
