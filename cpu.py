@@ -71,7 +71,13 @@ class Cpu:
             # execute...
             match self._decoded.mnem:
                 case "LOADI":
-                    pass  # complete implementation here
+                    #opcode(4), rd(3), imm(8), zero(1)
+                    #Semantics: Rd <– imm8 (zero-extended)
+                    dest = self._decoded.rd
+                    val = self._decoded.imm
+                    #load value into register immediately
+                    self._regs.execute(rd=dest, data=val, write_enable=True)
+
                 case "LUI":
                     # Load upper immediate (shifted left by 8 bits)
                     rd = self._decoded.rd
@@ -81,9 +87,25 @@ class Cpu:
                     data = upper | lower
                     self._regs.execute(rd=rd, data=data, write_enable=True)
                 case "LOAD":
-                    pass  # complete implementation here
+                    # gets destination in register
+                    dest = self._decoded.rd
+
+                    #gets start and offset for where we want to pull from memory
+                    start = self._decoded.ra
+                    offset = self._decoded.imm
+
+                    #access data memory and read at index (start+offset)
+                    data = self._d_mem.read(start + offset)
+
+                    #write data to dest in register
+                    self._regs.execute(rd=dest, data=data, write_enable=True)
+
+                    #Fields: opcode(4), rd(3), ra(3), imm(6)
+                    #Semantics: Rd <– MEM[Ra + signextend(imm6)]
                 case "STORE":
-                    pass  # complete implementation here
+                    #Fields: opcode(4), ra(3), rb(3), imm(6)
+                    #Semantics: MEM[Rb + signextend(imm6)] <– Ra
+                    pass
                 case "ADDI":
                     pass  # complete implementation here
                 case "ADD":
@@ -94,6 +116,7 @@ class Cpu:
                     pass  # complete implementation here
                 case "OR":
                     pass  # complete implementation here
+
                 case "XOR":
                     pass  # complete implementation here
                 case "SHFT":
