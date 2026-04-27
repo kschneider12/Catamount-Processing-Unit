@@ -160,7 +160,7 @@ class Alu:
         """
         SUB
         """
-        a = a & WORD_MASK
+        a = self._to_signed(a) & WORD_MASK
         new_b = (self._to_signed(b) * -1) & WORD_MASK
         result = (a + new_b) & WORD_MASK
         self._update_arith_flags_sub(a, b, result)

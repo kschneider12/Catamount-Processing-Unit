@@ -74,7 +74,7 @@ class Cpu:
                     # Load the two registers used
                     rd = self._decoded.rd
                     # Get the immediate value
-                    op = self._decoded.imm
+                    op = self.sext(self._decoded.imm,8)
                     # Load the operand into the destination register
                     self._regs.execute(rd=rd, data=op, write_enable=True)
                 case "LUI":
@@ -125,7 +125,7 @@ class Cpu:
 
                     # Get the values of the a register
                     op_a, _ = self._regs.execute(ra=ra)
-                    op_b = self._decoded.imm
+                    op_b = self.sext(self._decoded.imm,8)
 
                     # Calculate result with alu
                     result = self._alu.execute(op_a, op_b)
