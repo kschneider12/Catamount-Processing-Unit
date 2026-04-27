@@ -18,16 +18,34 @@ SETUP:
     ; Here we add consecutive natural numbers into consecutive
     ; memory addresses in a loop.
     STORE R1, [R6 + #0]   ; M[R6] = value
+    ADDI R1, R1, #1
+    ADDI R6, R6, #1
     ADDI R4, R4, #1       ; Nico: Increment Counter
     SUB R5, R4, R2        ; Nico: set flags
     BLT   SETUP           ; if counter < N, continue
 
     ; reset counter
     ; reset address to base
+    MOV R6, R0
     LOAD  R3, [R6 + #0]   ; max = M[0]  (seed with first element)
     ; advance past first element (just increment)
-    LOADI R4, #1          ; counter = 1  (first element already processed)
+    LOADI R4, #0
 
+LOOP:
+    LOAD R1, [R6 + #0]
+    ADDI R6, R6, #1
+    ADDI R4, R4, #1
+
+    SUB R5, R3, R1
+    BLT SET
+
+    SUB R5, R4, R2
+    BLT LOOP
+SET:
+    MOV R3, R1
+
+    SUB R5, R4, R2
+    BLT LOOP
 ; Complete the loop which finds the largest value and stores
 ; the result in R3. Do this work in the loop. Even though we
 ; know the largest value, show that you can write the assembly
