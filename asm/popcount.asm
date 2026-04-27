@@ -10,11 +10,11 @@
 ; Strategy: test LSB, shift right by 1, repeat 16 times.
 
     LOADI R1, #0x0F       ; test value (4 set bits)
-    LOADI R2, #0b0          ; count = 0
-    LOADI R3, #0b0
-    LOADI R4, #0x0F
-    LOADI R5, #0b1
-    LOADI R6, #0x8001       ; This could be wrong
+    LOADI R2, #0b0          ; accumulator = 0
+    LOADI R3, #0b0          ; loop counter = 0
+    LOADI R4, #0x0F         ; 16 bit limit
+    LOADI R5, #0b1          ; single bit mask
+    LOADI R6, #0x8001       ; shift control
 
 LOOP:
                           ; complete loop
