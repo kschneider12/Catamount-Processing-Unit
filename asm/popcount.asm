@@ -17,7 +17,8 @@
     LOADI R6, #0x8001       ; This could be wrong
 
 LOOP:
-    ; complete loop
+                          ; complete loop
+    ADDI R3, R3, #0b1     ; increase loop counter
     AND R7, R2, R5        ; Check if bit set
     ADD R2, R2, R7        ; Add to accumulator
     SHFT R2, R6           ; shift right
