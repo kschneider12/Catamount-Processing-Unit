@@ -386,14 +386,40 @@ def test_bge_integration():
     assert c.get_reg(5) == 0  # LOADI R5 was skipped
 
 
-def test_loadi():
+@pytest.mark.parametrize(
+    "imm,expected",
+    [
+        ("#0",    0),
+        ("#1",    1),
+        ("#3",    3),
+        ("#127",  127),   # max positive 8-bit signed
+        ("#-1",  -1),     # 0xFFFF -- catches missing sext
+        ("#-5",  -5),     # 0xFFFB
+        ("#-42", -42),    # 0xFFD6
+        ("#-128",-128),   # min negative 8-bit signed
+    ],
+)
+def test_loadi(imm, expected):
     """
-    Ensure LOADI writes correctly to specified register
+    Ensure LOADI sign-extends the immediate and writes to the correct register.
     """
-    prog = assemble(["LOADI R1, #3"])
+    prog = assemble([f"LOADI R1, {imm}"])
     c = make_cpu(prog)
-    c.tick()  # LOADI
-    assert c._regs.execute(ra=1) == (3, None)  # OK to access in tests
+    c.tick()
+    assert c.get_reg(1) == expected
+
+
+def test_loadi_writes_to_correct_register():
+    """
+    LOADI must write to rd (from the instruction), not sext(imm).
+    imm=#10 sign-extends to 10, which is out of register range — the rd/imm
+    swap bug raises IndexError; correct behavior writes 10 to R5 only.
+    """
+    prog = assemble(["LOADI R5, #10"])
+    c = make_cpu(prog)
+    c.tick()
+    assert c.get_reg(5) == 10
+    assert c.get_reg(1) == 0
 
 
 @pytest.mark.parametrize(
@@ -429,15 +455,39 @@ def test_add():
     assert c._regs.execute(ra=3) == (5, None)  # OK to access in tests
 
 
-def test_addi():
+@pytest.mark.parametrize(
+    "a,imm,expected",
+    [
+        (3,   4,    7),   # positive + positive
+        (3,  -1,    2),   # decrement -- catches missing sext
+        (0,  -1,   -1),   # zero base with negative immediate
+        (5,  -5,    0),   # sum to zero
+        (3, -32,  -29),   # min 6-bit signed immediate
+        (0,  31,   31),   # max 6-bit signed immediate
+    ],
+)
+def test_addi(a, imm, expected):
     """
-    Ensure ADDI writes correct result to specified register
+    Ensure ADDI sign-extends the immediate and writes the correct result.
     """
-    prog = assemble(["LOADI R1, #3", "ADDI R5, R1, #4"])
+    prog = assemble([f"LOADI R1, #{a}", f"ADDI R5, R1, #{imm}"])
     c = make_cpu(prog)
     c.tick()  # LOADI
     c.tick()  # ADDI
-    assert c._regs.execute(ra=5) == (7, None)  # OK to access in tests
+    assert c.get_reg(5) == expected
+
+
+def test_addi_writes_to_correct_register():
+    """
+    ADDI must write to rd (from the instruction), not sext(imm).
+    imm=#2 sign-extends to 2 — the rd/imm swap would write to R2 instead of R5.
+    """
+    prog = assemble(["LOADI R1, #10", "ADDI R5, R1, #2"])
+    c = make_cpu(prog)
+    c.tick()  # LOADI
+    c.tick()  # ADDI
+    assert c.get_reg(5) == 12
+    assert c.get_reg(2) == 0
 
 
 def test_and():

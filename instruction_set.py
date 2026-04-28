@@ -81,8 +81,8 @@ ISA = {
     "LOAD": {
         "opcode": 0x3,
         "format": "M",
-        "fields": ["opcode(4)", "rd(3)", "ra(3)", "imm(6)"],
-        "semantics": "Rd <-- MEM[Ra + signextend(imm6)]",
+        "fields": ["opcode(4)", "rd(3)", "ra(3)", "addr(6)"],
+        "semantics": "Rd <-- MEM[Ra + signextend(addr6)]",
         "description": "Load word from memory at [Ra + offset] into Rd.",
         "register_write": True,
         "memory_write": False,
@@ -93,8 +93,8 @@ ISA = {
     "STORE": {
         "opcode": 0x4,
         "format": "M",
-        "fields": ["opcode(4)", "ra(3)", "rb(3)", "imm(6)"],
-        "semantics": "MEM[Rb + signextend(imm6)] <-- Ra",
+        "fields": ["opcode(4)", "ra(3)", "rb(3)", "addr(6)"],
+        "semantics": "MEM[Rb + signextend(addr6)] <-- Ra",
         "description": "Store Ra (data source) to memory at Rb (base) + offset.",
         "register_write": False,
         "memory_write": True,

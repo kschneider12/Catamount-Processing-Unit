@@ -125,7 +125,7 @@ class Cpu:
 
                     # Get the values of the a register
                     op_a, _ = self._regs.execute(ra=ra)
-                    op_b = self.sext(self._decoded.imm,8)
+                    op_b = self.sext(self._decoded.imm,6)
 
                     # Calculate result with alu
                     result = self._alu.execute(op_a, op_b)
